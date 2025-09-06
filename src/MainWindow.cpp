@@ -15,12 +15,12 @@
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
 {
-    m_setting_menu = std::make_shared<settingMenu>();
+    m_setting_menu = new settingMenu;
 
     QTabWidget* tabs = new QTabWidget(this);
 
     QDockWidget* dockWidget = new QDockWidget(tr("setting"), this);
-    dockWidget->setWidget(m_setting_menu.get());
+    dockWidget->setWidget(m_setting_menu);
     dockWidget->setAllowedAreas(Qt::RightDockWidgetArea);       // 只能停靠右侧
     dockWidget->setFeatures(QDockWidget::DockWidgetFloatable);  // 允许浮动
     addDockWidget(Qt::RightDockWidgetArea, dockWidget);
@@ -38,7 +38,7 @@ MainWindow::MainWindow(QWidget* parent)
     setCentralWidget(tabs);
 
     m_setting_menu->viewer_ = viewer_->viewer_;
-    viewer_->registerCallback(std::bind(&settingMenu::handleCloud, m_setting_menu.get(), std::placeholders::_1));
+    viewer_->registerCallback(std::bind(&settingMenu::handleCloud, m_setting_menu, std::placeholders::_1));
     viewer_->registerCallback(std::bind(&BoxWindow::updateCloud, boxTab, std::placeholders::_1));
     m_setting_menu->registerUpdateViewerCallback(std::bind(&PCLViewerWidget::updateViewer,viewer_));
 

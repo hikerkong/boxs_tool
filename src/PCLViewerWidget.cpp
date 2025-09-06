@@ -34,7 +34,7 @@ PCLViewerWidget::PCLViewerWidget(QWidget* parent)
     viewer_.reset(new pcl::visualization::PCLVisualizer("viewer", false));
     viewer_->setBackgroundColor(0.1, 0.1, 0.12);
     viewer_->addCoordinateSystem(0.5, "axis");
-    viewer_->initCameraParameters();
+    // viewer_->initCameraParameters();
 
 
     qvtk_->GetRenderWindow()->AddRenderer(viewer_->getRendererCollection()->GetFirstRenderer());
@@ -52,8 +52,11 @@ void PCLViewerWidget::loadPCD(const QString& path)
         return;
     }
     *cloud_ = tmp;
-    if (cloud_callback_ && cloud_) {
-        cloud_callback_(cloud_);
+    if (cloud_) {
+        for (const auto& cb : cloud_callbacks_)
+        {
+            cb(cloud_);
+        }
     }
     current_path_ = path;
     has_cloud_ = true;
@@ -62,7 +65,7 @@ void PCLViewerWidget::loadPCD(const QString& path)
 
 void PCLViewerWidget::registerCallback(CallbackFunction callback)
 {
-    cloud_callback_ = callback;
+     cloud_callbacks_.push_back(callback);
 }
 
 void PCLViewerWidget::updateViewer()
@@ -82,7 +85,7 @@ void PCLViewerWidget::clear()
     cloud_->clear();
     viewer_->removeAllPointClouds();
     viewer_->removeAllShapes();
-    qvtk_->GetRenderWindow()->Render();  // 修改此处
+    qvtk_->GetRenderWindow()->Render();
 }
 
 void PCLViewerWidget::showCloud()
@@ -95,9 +98,8 @@ void PCLViewerWidget::showCloud()
     viewer_->setPointCloudRenderingProperties(
         pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 2, "cloud");
 
-    // 自动计算相机视角
     viewer_->resetCamera();
-    qvtk_->GetRenderWindow()->Render();  // 修改此处
+    qvtk_->GetRenderWindow()->Render();
 }
 
 // 捕获 Ctrl + 左键：进行拾取

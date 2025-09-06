@@ -25,7 +25,7 @@ private:
     void loadCurrentCloud();
     void updateStatusIndex();
      void someFunction();
-    std::shared_ptr<settingMenu> m_setting_menu{nullptr};
+    settingMenu* m_setting_menu{nullptr};
 
     PCLViewerWidget* viewer_ = nullptr;
     QStringList pcd_files_;

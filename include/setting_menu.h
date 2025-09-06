@@ -13,6 +13,8 @@
 #include <pcl/visualization/pcl_visualizer.h>
 #include <memory>
 #include <functional>
+
+
 using PointT = pcl::PointXYZ;
 using PointCloud = pcl::PointCloud<PointT>;
 using PointCloudPtr = PointCloud::Ptr;
@@ -41,7 +43,10 @@ private slots:
 
     void on_pushButton_3_clicked();
 
+    void on_pushButton_4_clicked();
+
 private:
+    void updateViewerWithCloud(const PointCloudPtr& cloud, const std::array<double,3>& color);
     Ui::settingMenu *ui;
     QTabWidget* tabWidget_;
     struct Impl;

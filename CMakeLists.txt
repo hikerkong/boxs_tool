@@ -8,19 +8,25 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(PCL REQUIRED COMPONENTS io visualization common)
+find_package(PCL REQUIRED COMPONENTS io visualization common filters segmentation)
 find_package(VTK REQUIRED)
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
 add_definitions(${PCL_DEFINITIONS})
+add_subdirectory(downsample)
+
 
 # 自动收集文件
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp)
 file(GLOB_RECURSE HEADERS CONFIGURE_DEPENDS include/*.h)
 file(GLOB_RECURSE UIS CONFIGURE_DEPENDS src/*.ui)
 
+
 # 添加可执行文件
-add_executable(qt_pcl_viewer)
+add_executable(qt_pcl_viewer
+    include/AlgorithmFactory.h
+    include/AlgorithmManager.h
+    include/AlgorithmRegistry.h)
 
 # 现代 CMake 风格绑定源文件和头文件
 target_sources(qt_pcl_viewer
@@ -34,6 +40,7 @@ target_sources(qt_pcl_viewer
 target_include_directories(qt_pcl_viewer
     PRIVATE
         include
+        downsample/include
         ${PCL_INCLUDE_DIRS}
         ${VTK_INCLUDE_DIRS}
 )
@@ -48,6 +55,8 @@ target_link_libraries(qt_pcl_viewer
         pcl_common
         pcl_search
         pcl_kdtree
+        pcl_filters
+        downsample
 )
 
 # VTK 版本兼容处理

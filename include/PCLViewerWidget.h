@@ -59,7 +59,7 @@ private:
     pcl::PointCloud<PointT>::Ptr cloud_;
     QString current_path_;
     bool has_cloud_ = false;
-    CallbackFunction cloud_callback_;
+    std::vector<CallbackFunction> cloud_callbacks_;
     bool viewer_initialized_;
     bool interactor_initialized_{false};
 
