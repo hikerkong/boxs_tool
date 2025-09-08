@@ -1,4 +1,10 @@
-#pragma once
+#ifndef DOWNSAMPLE_H
+#define DOWNSAMPLE_H
+
+// class Downsample {
+// public:
+//     static void run();
+// };
 
 #include "algorithm_base.h"
 #include <pcl/filters/voxel_grid.h>
@@ -25,4 +31,4 @@ private:
 
 } // namespace algorithm_pipeline::algorithms
 
-
+#endif // DOWNSAMPLE_H

@@ -3,9 +3,9 @@
 #include "euclideanCluster.h"
 #include <nlohmann/json.hpp>
 #include <iostream>
-#include "AlgorithmManager.h"
+#include "algorithm_manager.h"
 
-
+// #include "algorithm_registry.h"
 
 struct settingMenu::Impl
 {
@@ -91,44 +91,32 @@ void settingMenu::on_pushButton_4_clicked()
 
     nlohmann::json config;
     config["voxel_size"] = 0.01;  // UI 设置
-    auto cloud = m_impl->algo_mgr.run("downsample", config);
-    updateViewerWithCloud(cloud, {0.0, 1.0, 0.0});
+    // auto cloud = m_impl->algo_mgr.run("downsample", config);
+
+     m_impl->algo_mgr.loadLibraries({
+        "./algorithmTool/libdownsample.so",
+        "./algorithmTool/libfilter.so",
+        "./algorithmTool/libsegmentation.so"
+    });
 
 
-    // try {
+     algorithm_pipeline::PipelineStep step1;
+     step1.branches.push_back({"downsample", {{"voxel_size", 0.1}}});
+     step1.branches.push_back({"filter", {{"threshold", 0.2}}});
+     // step1.mergeFunc = 自定义合并函数（可选）
+     m_impl->algo_mgr.addStep(step1);
 
-    //     if (!m_impl || !m_impl->cloud || !viewer_) {
-    //         std::cerr << "Error: Required objects not initialized" << std::endl;
-    //         return;
-    //     }
+     algorithm_pipeline::PipelineStep step2;
+     step2.branches.push_back({"segmentation", {{"method", "RANSAC"}}});
+     m_impl->algo_mgr.addStep(step2);
 
-    //     if (m_impl->cloud->empty()) {
-    //         std::cerr << "Warning: Input point cloud is empty" << std::endl;
-    //         return;
-    //     }
+     m_impl->algo_mgr.printPipeline();
 
-    //     auto downsample_algo = std::make_unique<Downsample>();
+     auto result = m_impl->algo_mgr.runPipeline();
+     spdlog::info("Final output points: {}", result ? result->size() : 0);
 
-    //     nlohmann::json config;
-    //     config["voxel_size"] = 0.01;
 
-    //     if (!downsample_algo->initialize(config)) {
-    //         std::cerr << "Error: Failed to initialize downsample algorithm" << std::endl;
-    //         return;
-    //     }
+    updateViewerWithCloud(result, {0.0, 1.0, 0.0});
 
-    //     m_impl->cloud_out->clear();
-    //     if (!downsample_algo->process(m_impl->cloud, m_impl->cloud_out)) {
-    //         std::cerr << "Error: Failed to process downsample" << std::endl;
-    //         return;
-    //     }
-
-    //    updateViewerWithCloud(m_impl->cloud_out, {0.0, 1.0, 0.0});
-
-    // } catch (const std::exception& e) {
-    //     std::cerr << "Exception in on_pushButton_4_clicked: " << e.what() << std::endl;
-    // } catch (...) {
-    //     std::cerr << "Unknown exception in on_pushButton_4_clicked" << std::endl;
-    // }
 }
 

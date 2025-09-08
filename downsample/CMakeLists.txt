@@ -1,7 +1,15 @@
+# add_library(downsample SHARED downsample.cpp)
+# target_include_directories(downsample PUBLIC ${CMAKE_SOURCE_DIR}/algorithm_registry)
+# target_link_libraries(downsample algorithm_registry)
+# set_target_properties(downsample PROPERTIES
+#     LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/downsample
+# )
+
+
 cmake_minimum_required(VERSION 3.16)
 project(downsample)
 
-# 增加调试信息，确认PCL是否正确找到
+
 message(STATUS "Looking for PCL...")
 find_package(PCL REQUIRED COMPONENTS common filters)
 if(PCL_FOUND)
@@ -28,6 +36,7 @@ add_library(${PROJECT_NAME} SHARED
 # Include directories
 target_include_directories(${PROJECT_NAME}
     PUBLIC
+        ${CMAKE_SOURCE_DIR}/algorithm_registry
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
         ${PCL_INCLUDE_DIRS}  # 显式添加PCL头文件目录
@@ -38,6 +47,7 @@ target_include_directories(${PROJECT_NAME}
 # Link libraries - 显式列出关键PCL库
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
+        algorithm_registry
         pcl_common
         pcl_filters
         ${PCL_LIBRARIES}
@@ -57,6 +67,7 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC ${PCL_DEFINITIONS})
 
 # 对于共享库，确保符号可见性
 set_target_properties(${PROJECT_NAME} PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/algorithmTool
     CXX_VISIBILITY_PRESET default
     VISIBILITY_INLINES_HIDDEN OFF
 )

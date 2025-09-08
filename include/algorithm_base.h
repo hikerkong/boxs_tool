@@ -67,9 +67,16 @@ protected:
      * @brief Initialize logger for this algorithm
      */
     void initializeLogger() {
-        logger_ = spdlog::get(name_);
-        if (!logger_) {
-            logger_ = spdlog::stdout_color_mt(name_);
+        try {
+            logger_ = spdlog::get(name_);
+            if (!logger_) {
+                logger_ = spdlog::stdout_color_mt(name_);
+            }
+        } catch (const std::exception& e) {
+            // Fallback: create a simple logger if spdlog fails
+            std::cerr << "Warning: Failed to initialize spdlog logger for " << name_
+                      << ": " << e.what() << ". Using fallback logger." << std::endl;
+            logger_ = spdlog::stdout_color_mt(name_ + "_fallback");
         }
     }
 };

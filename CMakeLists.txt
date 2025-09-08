@@ -14,6 +14,7 @@ find_package(Qt5 REQUIRED COMPONENTS Widgets)
 
 add_definitions(${PCL_DEFINITIONS})
 add_subdirectory(downsample)
+add_subdirectory(algorithm_registry)
 
 
 # 自动收集文件
@@ -24,9 +25,9 @@ file(GLOB_RECURSE UIS CONFIGURE_DEPENDS src/*.ui)
 
 # 添加可执行文件
 add_executable(qt_pcl_viewer
-    include/AlgorithmFactory.h
+   #[[ include/AlgorithmFactory.h
     include/AlgorithmManager.h
-    include/AlgorithmRegistry.h)
+    include/AlgorithmRegistry.h]])
 
 # 现代 CMake 风格绑定源文件和头文件
 target_sources(qt_pcl_viewer
